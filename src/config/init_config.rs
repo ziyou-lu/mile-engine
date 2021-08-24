@@ -25,7 +25,7 @@ pub struct DBConfig {
 
 impl Default for InitConfig {
     fn default() -> Self {
-        let file_path = "../../res/init.toml";
+        let file_path = "res/init.toml";
         let mut file = match File::open(file_path) {
             Ok(f) => f,
             Err(e) => panic!("no such file: {}, error: {}", file_path, e)

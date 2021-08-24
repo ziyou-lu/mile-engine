@@ -6,7 +6,7 @@ pub mod mapper;
 
 pub async fn init_rbatis(config: &InitConfig) -> Rbatis {
     let mut rbatis = Rbatis::new();
-    //logic plugin 设置逻辑删除插件
+    //设置逻辑删除插件
     rbatis.logic_plugin = Some(Box::new(RbatisLogicDeletePlugin::new_opt(
         &config.db.logic_column,
         config.db.logic_deleted as i32,
