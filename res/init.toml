@@ -3,7 +3,7 @@ host = "127.0.0.1:6666"
 debug = true
 
 [db]
-mysql_url = "mysql://root:123456@localhost:3306/mile
+mysql_url = "mysql://root:123456@localhost:3306/mile"
 logic_column = "del"
 logic_un_deleted = 0
 logic_deleted = 1
