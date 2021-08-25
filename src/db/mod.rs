@@ -19,6 +19,6 @@ pub async fn init_rbatis(config: &InitConfig) -> Rbatis {
     }
     //连接数据库
     rbatis.link(&config.db.mysql_url).await.expect("[abs_admin] rbatis link database fail!");
-    println!("[abs_admin] rbatis link database success!");
+    println!("[mile-engine] rbatis link database success!");
     return rbatis;
 }
