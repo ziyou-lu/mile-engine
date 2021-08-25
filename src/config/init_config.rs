@@ -7,12 +7,13 @@ use serde_derive::Deserialize;
 pub struct InitConfig {
     pub global: GlobalConfig,
     pub db: DBConfig,
+    pub log: LogConfig
 }
 
 #[derive(Deserialize)]
 pub struct GlobalConfig {
     pub host: String,
-    pub debug: bool,
+    pub debug: bool
 }
 
 #[derive(Deserialize)]
@@ -21,6 +22,14 @@ pub struct DBConfig {
     pub logic_column: String,
     pub logic_un_deleted: i64,
     pub logic_deleted: i64,
+}
+
+#[derive(Deserialize)]
+pub struct LogConfig {
+    pub file_level: String,
+    pub console_level: String,
+    pub file_max_size: i32,
+    pub file_split_time: i32
 }
 
 impl Default for InitConfig {

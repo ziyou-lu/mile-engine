@@ -1,9 +1,28 @@
 [global]
+#服务器ip:端口
 host = "127.0.0.1:6666"
+#debug模式开关
 debug = true
 
 [db]
+#mysql链接地址 "mysql://user:password@ip:port/db"
 mysql_url = "mysql://root:123456@localhost:3306/mile"
+#mysql逻辑删除列名
 logic_column = "del"
+#mysql未删除值
 logic_un_deleted = 0
+#mysql已删除值
 logic_deleted = 1
+
+#log 模块配置
+[log]
+#存入日志文件的日志等级下限
+#日志等级 "DEBUG" < "INFO" < "WARN" < "ERROR"
+#若配置global.debug = false则只能打印WARN以上日志
+file_level = "DEBUG"
+#打印控制台的日志等级下限
+console_level = "DEBUG"
+#最大日志文件大小(MB)
+file_max_size = 256
+#日志文件分文件间隔(天)
+file_split_time = 1

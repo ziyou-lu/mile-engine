@@ -14,7 +14,7 @@ impl Default for Context {
             rbatis: rbatis::core::runtime::task::block_on(async {
                 crate::db::init_rbatis(&init_config).await
             }),
-            init_config: init_config
+            init_config
         }
     }
 
