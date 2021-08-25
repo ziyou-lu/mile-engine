@@ -6,11 +6,13 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = "0.4.19"
 lazy_static = "1.4.0"
+rand = "0.8.4"
 rbatis = "2.0.24"
 serde = "1.0.129"
 serde_derive = "1.0.129"
 serde_json = "1.0.66"
-time = "0.3.1"
 tokio = { version ="1.10.0", features = ["full"] }
 toml = "0.5.8"
+uuid = "0.8.2"

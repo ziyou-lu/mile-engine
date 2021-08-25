@@ -12,6 +12,7 @@ pub struct InitConfig {
 
 #[derive(Deserialize)]
 pub struct GlobalConfig {
+    pub server_name: String,
     pub host: String,
     pub debug: bool
 }

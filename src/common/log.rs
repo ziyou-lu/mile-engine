@@ -2,7 +2,12 @@ use std::fs;
 use crate::config::init_config::LogConfig;
 use std::collections::HashMap;
 use crate::common::log::LogType::{LogTypeFile, LogTypeConsole};
-use time;
+use chrono;
+use std::io::{Error, Read, Write};
+use std::ops::{Sub, Add};
+use chrono::{Duration, TimeZone};
+use uuid;
+use std::str::FromStr;
 
 pub struct Log {}
 
@@ -88,11 +93,55 @@ fn should_output(log_type: LogType) -> bool {
 }
 
 fn save_to_log_file(level: &str, content: &str) {
-    if !fs::try_exists("log").unwrap() {
+    if !fs::read_dir("log") == Err {
         fs::DirBuilder::new().create("log");
+    }
+
+
+    let file_split_day = crate::CONTEXT.init_config.log.file_split_time;
+    let server_name = crate::CONTEXT.init_config.global.server_name.clone();
+
+    let log_content = format!("[{}] {:?} {} \n\r", level, chrono::Local::now(), content);
+
+    if let Ok(mut record_file) = fs::File::open("log/log_record") {
+        let mut record_str = String::new();
+        record_file.read_to_string(&mut record_str)?;
+
+        let native_date = chrono::NaiveDate::from_str(record_str.as_str())?.add(Duration::days(file_split_day as i64));
+        chrono::Local::from_local_date(&native_date)?;
+
+        if fs::read("log/latest.log") == Err {
+            let mut file = fs::File::create("log/latest.log")?;
+
+            file.write(log_content.as_bytes());
+            file.flush();
+
+        } else {
+            fs::rename("log/latest.log", format!("{}-{}-{}.log", server_name, chrono::Local::today().sub(Duration::days(file_split_day as i64)), uuid::Uuid::new_v4().to_string()));
+        }
+    } else {
+        if let Ok(latest_file) = fs::File::open("log/latest.log") {
+            fs::rename("log/latest.log", format!("{}-{}-{}.log", server_name, chrono::Local::today().sub(Duration::days(file_split_day as i64)), uuid::Uuid::new_v4().to_string()))?;
+        }
+
+        let mut file = fs::File::create("log/latest.log")?;
+
+        file.write(log_content.as_bytes());
+        file.flush();
+
+        let mut record_file = fs::File::create("log/log_record")?;
+        record_file.write(chrono::Local::today().to_string().as_bytes());
+        record_file.flush();
+    };
+
+
+    if record_file == None {
+
+    } else {
+
     }
 }
 
 fn output_to_console(level: &str, content: &str) {
-    println!("[{}] {:?} {}", level, time::Instant::now(), content);
+    println!("[{}] {:?} {}\n\r", level, chrono::Local::now(), content);
 }
