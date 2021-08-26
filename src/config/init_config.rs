@@ -33,6 +33,11 @@ pub struct LogConfig {
     pub file_split_time: i32
 }
 
+pub struct RpcConfig {
+    pub port: String,
+    pub cpu_pool_threads: u8,
+}
+
 impl Default for InitConfig {
     fn default() -> Self {
         let file_path = "res/init.toml";

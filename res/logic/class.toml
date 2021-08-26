@@ -1,0 +1,8 @@
+[obj]
+role = {tag = "role", design = "res/logic/design/obj/role.toml"}
+npc = {tag = "npc", design = "res/logic/design/obj/npc.toml"}
+item = {item = "item", design = "res/logic/design/obj/item.toml"}
+
+[box]
+scene = {tag = "scene", design = "res/logic/design/box/scene.toml"}
+item_box = {tag = "item_box", design = "res/logic/design/box/item_box.toml"}
