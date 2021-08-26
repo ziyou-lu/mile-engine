@@ -29,7 +29,7 @@ pub struct DBConfig {
 pub struct LogConfig {
     pub file_level: String,
     pub console_level: String,
-    pub file_max_size: i32,
+    pub file_max_size: u64,
     pub file_split_time: i32
 }
 

@@ -1,9 +1,11 @@
 use crate::InitConfig;
 use rbatis::rbatis::Rbatis;
+use crate::common::log::Log;
 
 pub struct Context {
     pub init_config: InitConfig,
-    pub rbatis: Rbatis
+    pub rbatis: Rbatis,
+    pub log: Log
 }
 
 impl Default for Context {
@@ -14,7 +16,8 @@ impl Default for Context {
             rbatis: rbatis::core::runtime::task::block_on(async {
                 crate::db::init_rbatis(&init_config).await
             }),
-            init_config
+            init_config,
+            log: Log{}
         }
     }
 

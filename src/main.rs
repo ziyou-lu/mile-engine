@@ -1,4 +1,3 @@
-#![feature(path_try_exists)]
 #[macro_use]
 extern crate lazy_static;
 
@@ -22,27 +21,27 @@ async fn main() {
                 password: String::from("123")
         };
         match CONTEXT.rbatis.save::<User>(&user, &[]).await {
-                Ok(_r) => println!("玩家注册成功，用户名为 {}, 密码为{}", user.user_name, user.password),
-                Err(e) => panic!("玩家注册失败, 失败原因{}", e)
+                Ok(_r) => CONTEXT.log.info(format!("玩家注册成功，用户名为 {}, 密码为{}", user.user_name, user.password)),
+                Err(e) => CONTEXT.log.error(format!("玩家注册失败，失败原因{:?}", e))
         }
 
         let mut login_user = User {
                 user_name: String::from("ziyou"),
                 password: String::from("123456")
         };
-        println!("玩家登录，输入的账号为 {} 密码为 {}", login_user.user_name, login_user.password);
+        CONTEXT.log.info(format!("玩家登录，输入的账号为 {} 密码为 {}", login_user.user_name, login_user.password));
         let user_info = match CONTEXT.rbatis.fetch_by_column::<User, String>("user_name", &login_user.user_name).await {
                 Ok(r) => Some(r),
                 Err(e) => {
-                        println!("查询玩家用户名失败，用户名还未注册 错误 {}", e);
+                        CONTEXT.log.info(format!("查询玩家用户名失败，用户名还未注册 错误 {}", e));
                         None
                 }
         };
 
         if user_info.unwrap().password == login_user.password {
-                println!("玩家 {} 登录成功, 正在获取角色信息", login_user.user_name);
+                CONTEXT.log.info(format!("玩家 {} 登录成功, 正在获取角色信息", login_user.user_name));
         } else {
-                println!("玩家 {} 登录失败, 密码错误", login_user.user_name);
+                CONTEXT.log.warn(format!("玩家 {} 登录失败, 密码错误", login_user.user_name));
         }
 
         login_user = User {
@@ -50,18 +49,18 @@ async fn main() {
                 password: String::from("123")
         };
 
-        println!("玩家登录，输入的账号为 {} 密码为 {}", login_user.user_name, login_user.password);
+        CONTEXT.log.info(format!("玩家登录，输入的账号为 {} 密码为 {}", login_user.user_name, login_user.password));
         let user_info = match CONTEXT.rbatis.fetch_by_column::<User, String>("user_name", &login_user.user_name).await {
                 Ok(r) => Some(r),
                 Err(e) => {
-                        println!("查询玩家用户名失败，用户名还未注册 错误 {}", e);
+                        CONTEXT.log.info(format!("查询玩家用户名失败，用户名还未注册 错误 {}", e));
                         None
                 }
         };
 
         if user_info.unwrap().password == login_user.password {
-                println!("玩家 {} 登录成功, 正在获取角色信息", login_user.user_name);
+                CONTEXT.log.debug(format!("玩家 {} 登录成功, 正在获取角色信息", login_user.user_name));
         } else {
-                println!("玩家 {} 登录失败, 密码错误", login_user.user_name);
+                CONTEXT.log.info(format!("玩家 {} 登录失败, 密码错误", login_user.user_name));
         }
 }

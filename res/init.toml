@@ -1,4 +1,6 @@
 [global]
+#服务器名
+server_name = "mile-engine"
 #服务器ip:端口
 host = "127.0.0.1:6666"
 #debug模式开关
@@ -17,11 +19,11 @@ logic_deleted = 1
 #log 模块配置
 [log]
 #存入日志文件的日志等级下限
-#日志等级 "DEBUG" < "INFO" < "WARN" < "ERROR"
+#日志等级 "debug" < "info" < "warn" < "error"
 #若配置global.debug = false则只能打印WARN以上日志
-file_level = "DEBUG"
+file_level = "debug"
 #打印控制台的日志等级下限
-console_level = "DEBUG"
+console_level = "debug"
 #最大日志文件大小(MB)
 file_max_size = 256
 #日志文件分文件间隔(天)

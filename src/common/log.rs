@@ -1,13 +1,11 @@
 use std::fs;
-use crate::config::init_config::LogConfig;
 use std::collections::HashMap;
 use crate::common::log::LogType::{LogTypeFile, LogTypeConsole};
-use chrono;
-use std::io::{Error, Read, Write};
-use std::ops::{Sub, Add};
-use chrono::{Duration, TimeZone};
+use std::io::{Read, Write};
+use std::ops::{Add};
 use uuid;
 use std::str::FromStr;
+use std::os::unix::fs::MetadataExt;
 
 pub struct Log {}
 
@@ -22,9 +20,9 @@ static ERROR_LEVEL: i8 = 4;
 lazy_static! {
     pub static ref LEVEL_MAP: HashMap<&'static str, i8> = [
         (DEBUG, DEBUG_LEVEL),
-        (DEBUG, INFO_LEVEL),
-        (DEBUG, WARN_LEVEL),
-        (DEBUG, ERROR_LEVEL)
+        (INFO, INFO_LEVEL),
+        (WARN, WARN_LEVEL),
+        (ERROR, ERROR_LEVEL)
     ].into();
 }
 enum LogType<'a> {
@@ -33,43 +31,51 @@ enum LogType<'a> {
 }
 
 impl Log {
-    pub fn debug(content: &str) {
+    pub fn debug(&self, content: String) {
         if should_output(LogTypeFile(DEBUG)){
-            save_to_log_file(DEBUG, content);
+            if let Err(e) = save_to_log_file(DEBUG, content.as_str()) {
+                output_to_console(ERROR , format!("[engine] {:?}", e).as_str());
+            }
         }
 
         if should_output(LogTypeConsole(DEBUG)) {
-            output_to_console(DEBUG, content);
+            output_to_console(DEBUG, content.as_str());
         }
     }
 
-    pub fn info(content: &str) {
+    pub fn info(&self, content: String) {
         if should_output(LogTypeFile(INFO)){
-            save_to_log_file(INFO, content);
+            if let Err(e) = save_to_log_file(INFO, content.as_str()) {
+                output_to_console(INFO , format!("[engine] {:?}", e).as_str());
+            }
         }
 
         if should_output(LogTypeConsole(INFO)) {
-            output_to_console(INFO, content);
+            output_to_console(INFO, content.as_str());
         }
     }
 
-    pub fn warn(content: &str) {
+    pub fn warn(&self, content: String) {
         if should_output(LogTypeFile(WARN)){
-            save_to_log_file(WARN, content);
+            if let Err(e) = save_to_log_file(WARN, content.as_str()) {
+                output_to_console(WARN , format!("[engine] {:?}", e).as_str());
+            }
         }
 
         if should_output(LogTypeConsole(WARN)) {
-            output_to_console(WARN, content);
+            output_to_console(WARN, content.as_str());
         }
     }
 
-    pub fn error(content: &str) {
+    pub fn error(&self, content: String) {
         if should_output(LogTypeFile(ERROR)){
-            save_to_log_file(ERROR, content);
+            if let Err(e) = save_to_log_file(ERROR, content.as_str()) {
+                output_to_console(ERROR , format!("[engine] {:?}", e).as_str());
+            }
         }
 
         if should_output(LogTypeConsole(ERROR)) {
-            output_to_console(ERROR, content);
+            output_to_console(ERROR, content.as_str());
         }
     }
 }
@@ -79,7 +85,7 @@ fn should_output(log_type: LogType) -> bool {
         LogTypeConsole(level) => (level, crate::CONTEXT.init_config.log.console_level.as_str()),
         LogTypeFile(level) => (level, crate::CONTEXT.init_config.log.file_level.as_str())
     };
-    let config_log_level = crate::CONTEXT.init_config.log.console_level.as_str();
+
     if (!LEVEL_MAP.contains_key(config_log_level) || !crate::CONTEXT.init_config.global.debug)
         && LEVEL_MAP.get(level).unwrap() < &WARN_LEVEL {
         return false;
@@ -92,56 +98,80 @@ fn should_output(log_type: LogType) -> bool {
     return true;
 }
 
-fn save_to_log_file(level: &str, content: &str) {
-    if !fs::read_dir("log") == Err {
-        fs::DirBuilder::new().create("log");
+fn save_to_log_file(level: &str, content: &str) -> Result<(), std::io::Error>{
+    if let Err(_) = fs::read_dir("log") {
+        fs::DirBuilder::new().create("log")?;
     }
-
 
     let file_split_day = crate::CONTEXT.init_config.log.file_split_time;
     let server_name = crate::CONTEXT.init_config.global.server_name.clone();
 
-    let log_content = format!("[{}] {:?} {} \n\r", level, chrono::Local::now(), content);
+    let log_content = format!("[{}] {:?} {} \n", level, chrono::Local::now(), content);
 
-    if let Ok(mut record_file) = fs::File::open("log/log_record") {
-        let mut record_str = String::new();
-        record_file.read_to_string(&mut record_str)?;
+    let mut record_str = String::new();
+    let create_new_file = match fs::File::open("log/.log") {
+        Ok(mut record_file) => {
+            record_file.read_to_string(&mut record_str)?;
 
-        let native_date = chrono::NaiveDate::from_str(record_str.as_str())?.add(Duration::days(file_split_day as i64));
-        chrono::Local::from_local_date(&native_date)?;
-
-        if fs::read("log/latest.log") == Err {
-            let mut file = fs::File::create("log/latest.log")?;
-
-            file.write(log_content.as_bytes());
-            file.flush();
-
-        } else {
-            fs::rename("log/latest.log", format!("{}-{}-{}.log", server_name, chrono::Local::today().sub(Duration::days(file_split_day as i64)), uuid::Uuid::new_v4().to_string()));
+            let record_date = chrono::DateTime::<chrono::Local>::from_str(record_str.as_str()).unwrap_or_else(|e| {
+                output_to_console(ERROR, format!("{:?}", e.to_string()).as_str());
+                chrono::Local::now()
+            });
+            record_date.add(chrono::Duration::days(file_split_day as i64)).lt(&chrono::Local::now())
         }
-    } else {
-        if let Ok(latest_file) = fs::File::open("log/latest.log") {
-            fs::rename("log/latest.log", format!("{}-{}-{}.log", server_name, chrono::Local::today().sub(Duration::days(file_split_day as i64)), uuid::Uuid::new_v4().to_string()))?;
+        Err(_) => {
+            fs::File::create("log/.log")?;
+            true
         }
-
-        let mut file = fs::File::create("log/latest.log")?;
-
-        file.write(log_content.as_bytes());
-        file.flush();
-
-        let mut record_file = fs::File::create("log/log_record")?;
-        record_file.write(chrono::Local::today().to_string().as_bytes());
-        record_file.flush();
     };
 
+    if create_new_file {
+        if let Ok(_) = fs::File::open("log/latest.log") {
+            fs::rename("log/latest.log",
+                       format!("log/{}-{}-{}.log",
+                               server_name,
+                               record_str,
+                               uuid::Uuid::new_v4().to_string()
+                       ))?;
+        }
 
-    if record_file == None {
+        let mut file = fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open("log/latest.log")?;
+        file.write_all(log_content.as_bytes())?;
+        file.flush()?;
 
+        let mut record_file = fs::OpenOptions::new()
+            .create(true)
+            .truncate(true)
+            .write(true)
+            .open("log/.log")?;
+        record_file.write_all(chrono::Local::today().and_hms(0, 0, 0).to_string().as_bytes())?;
+        record_file.flush()?;
     } else {
+        if let Ok(_) = fs::read("log/latest.log") {
+            if fs::metadata("log/latest.log").unwrap().size() / 1024 > crate::CONTEXT.init_config.log.file_max_size {
+                fs::rename("log/latest.log",
+                           format!("log/{}-{}-{}.log",
+                                   server_name,
+                                   record_str,
+                                   uuid::Uuid::new_v4().to_string()
+                           ))?;
+            }
+        }
 
+        let mut file = fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open("log/latest.log")?;
+        file.write_all(log_content.as_bytes())?;
+        file.flush()?;
     }
+
+    Ok(())
 }
 
 fn output_to_console(level: &str, content: &str) {
-    println!("[{}] {:?} {}\n\r", level, chrono::Local::now(), content);
+    println!("[{}] {:?} {}", level, chrono::Local::now(), content);
 }
