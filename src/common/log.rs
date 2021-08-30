@@ -78,15 +78,25 @@ impl Log {
             output_to_console(ERROR, content.as_str());
         }
     }
+
+    pub fn panic(&self, content: String) -> !{
+        if should_output(LogTypeFile(ERROR)){
+            if let Err(e) = save_to_log_file(ERROR, content.as_str()) {
+                output_to_console(ERROR , format!("[engine] {:?}", e).as_str());
+            }
+        }
+
+        panic!(content);
+    }
 }
 
 fn should_output(log_type: LogType) -> bool {
     let (level, config_log_level) = match log_type {
-        LogTypeConsole(level) => (level, crate::CONTEXT.init_config.log.console_level.as_str()),
-        LogTypeFile(level) => (level, crate::CONTEXT.init_config.log.file_level.as_str())
+        LogTypeConsole(level) => (level, crate::MILE.get_context().init_config.log.console_level.as_str()),
+        LogTypeFile(level) => (level, crate::MILE.get_context().init_config.log.file_level.as_str())
     };
 
-    if (!LEVEL_MAP.contains_key(config_log_level) || !crate::CONTEXT.init_config.global.debug)
+    if (!LEVEL_MAP.contains_key(config_log_level) || !crate::MILE.get_context().init_config.global.debug)
         && LEVEL_MAP.get(level).unwrap() < &WARN_LEVEL {
         return false;
     }
@@ -103,8 +113,8 @@ fn save_to_log_file(level: &str, content: &str) -> Result<(), std::io::Error>{
         fs::DirBuilder::new().create("log")?;
     }
 
-    let file_split_day = crate::CONTEXT.init_config.log.file_split_time;
-    let server_name = crate::CONTEXT.init_config.global.server_name.clone();
+    let file_split_day = crate::MILE.get_context().init_config.log.file_split_time;
+    let server_name = crate::MILE.get_context().init_config.global.server_name.clone();
 
     let log_content = format!("[{}] {:?} {} \n", level, chrono::Local::now(), content);
 
@@ -151,7 +161,7 @@ fn save_to_log_file(level: &str, content: &str) -> Result<(), std::io::Error>{
         record_file.flush()?;
     } else {
         if let Ok(_) = fs::read("log/latest.log") {
-            if fs::metadata("log/latest.log").unwrap().size() / 1024 > crate::CONTEXT.init_config.log.file_max_size {
+            if fs::metadata("log/latest.log").unwrap().size() / 1024 > crate::MILE.get_context().init_config.log.file_max_size {
                 fs::rename("log/latest.log",
                            format!("log/{}-{}-{}.log",
                                    server_name,
