@@ -1,7 +1,6 @@
 use crate::InitConfig;
 use rbatis::rbatis::Rbatis;
 use crate::common::log::Log;
-use crate::rpc::Rpc;
 use grpc::rt::ServerServiceDefinition;
 use crate::logic::logic_base::LogicBase;
 use std::sync::{Arc,Mutex};
@@ -12,7 +11,6 @@ pub struct Context {
     pub init_config: InitConfig,
     pub rbatis: Rbatis,
     pub log: Log,
-    pub rpc: RefCell<Rpc>,
 
     pub(crate) logics: Arc<Mutex<Vec<Box<dyn LogicBase + Send>>>>
 }
@@ -30,10 +28,6 @@ impl Default for Context {
                 crate::db::init_rbatis(&init_config).await
             }),
             log: Log{},
-            rpc: match crate::rpc::init_rpc(&init_config) {
-                Ok(rpc) => RefCell::new(rpc),
-                Err(e) => panic!("rpc init error! {}", e)
-            },
             logics: Arc::new(Mutex::new(vec![])),
             init_config
         }
@@ -44,9 +38,5 @@ impl Default for Context {
 impl Context{
     pub fn registry_logic_module<T>(&mut self, logic: T) where T : LogicBase + Send + 'static {
         self.logics.lock().unwrap().deref_mut().push(Box::new(logic));
-    }
-
-    pub fn add_service_for_client(&mut self, service: ServerServiceDefinition) {
-        self.rpc.into_inner().server_builder.into_inner().add_service(service);
     }
 }

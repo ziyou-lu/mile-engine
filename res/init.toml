@@ -1,6 +1,7 @@
 [global]
 #服务器名
 server_name = "mile-engine"
+host = "127.0.0.1:6666"
 #debug模式开关
 debug = true
 
@@ -27,9 +28,7 @@ file_max_size = 256
 #日志文件分文件间隔(天)
 file_split_time = 1
 
-#rpc 相关
-[rpc]
-#服务器ip:端口
+#server相关
+[server]
+#端口
 port = "6666"
-#cpu线程数量
-cpu_pool_threads = 8

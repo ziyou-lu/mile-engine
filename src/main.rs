@@ -1,26 +1,22 @@
-#![feature(in_band_lifetimes)]
 #[macro_use]
 extern crate lazy_static;
 
 pub mod db;
 mod cache;
-mod rpc;
 mod context;
 mod config;
 mod common;
 mod logic;
 
 use config::init_config::InitConfig;
-use logic::logic_base::LogicBase;
 use crate::db::mapper::User;
 use std::ops::DerefMut;
 use rbatis::crud::CRUD;
 use crate::common::error::Error;
-use std::cell::RefCell;
 use crate::context::Context;
-use std::sync::{Arc, Mutex};
+use tokio::net::TcpListener;
 
-struct Mile {
+pub struct Mile {
 	context: context::Context,
 }
 
@@ -40,11 +36,6 @@ impl Mile {
 	}
 
 	pub fn start(&mut self) -> Result<(), Error> {
-		self.get_context().rpc.into_inner().server = Some(match self.get_context().rpc.into_inner().server_builder.into_inner().build() {
-			Ok(server) => server,
-			Err(e) => MILE.get_context().log.panic(format!("start server error, {:?}", e))
-		});
-
 		self.init_all_logics()
 	}
 
@@ -119,4 +110,19 @@ async fn main() {
 	} else {
 		MILE.get_context().log.info(format!("玩家 {} 登录失败, 密码错误", login_user.user_name));
 	}
+
+	let host = MILE.get_context().init_config.global.host.clone();
+	let listener = TcpListener::bind(host).await.unwrap();
+
+	loop{
+		let (mut socket,_)=listener.accept().await.unwrap();
+		tokio::spawn(async move {
+			let (mut reader, mut writer)=socket.split();
+			// let mut b1=Vec::new();
+			// reader.read_to_end(&mut b1).await?;
+			// println!("{:?}",String::from_utf8_lossy(&b1));
+			tokio::io::copy(&mut reader,&mut writer).await//上面注释取消的话，writter中将不会写入任何信息，因为reader中的值，已经被读取完。
+		});
+	}
+
 }

@@ -5,7 +5,6 @@ use std::io::{Read, Write};
 use std::ops::{Add};
 use uuid;
 use std::str::FromStr;
-use std::os::unix::fs::MetadataExt;
 
 pub struct Log {}
 
@@ -161,7 +160,7 @@ fn save_to_log_file(level: &str, content: &str) -> Result<(), std::io::Error>{
         record_file.flush()?;
     } else {
         if let Ok(_) = fs::read("log/latest.log") {
-            if fs::metadata("log/latest.log").unwrap().size() / 1024 > crate::MILE.get_context().init_config.log.file_max_size {
+            if fs::metadata("log/latest.log").unwrap().len() / 1024 > crate::MILE.get_context().init_config.log.file_max_size {
                 fs::rename("log/latest.log",
                            format!("log/{}-{}-{}.log",
                                    server_name,
