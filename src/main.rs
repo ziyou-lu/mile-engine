@@ -12,6 +12,7 @@ use config::init_config::InitConfig;
 use crate::db::mapper::User;
 use std::ops::DerefMut;
 use rbatis::crud::CRUD;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use crate::common::error::Error;
 use crate::context::Context;
 use tokio::net::TcpListener;
@@ -118,10 +119,11 @@ async fn main() {
 		let (mut socket,_)=listener.accept().await.unwrap();
 		tokio::spawn(async move {
 			let (mut reader, mut writer)=socket.split();
-			// let mut b1=Vec::new();
-			// reader.read_to_end(&mut b1).await?;
-			// println!("{:?}",String::from_utf8_lossy(&b1));
-			tokio::io::copy(&mut reader,&mut writer).await//上面注释取消的话，writter中将不会写入任何信息，因为reader中的值，已经被读取完。
+			 let mut b1=Vec::new();
+			 reader.read_to_end(&mut b1).await;
+			 println!("接到客户端消息：{:?}",String::from_utf8_lossy(&b1));
+
+			writer.write_all(format!("我接到了哦，别点了，你发送的信息为{:?}", String::from_utf8_lossy(&b1)).as_bytes()).await;
 		});
 	}
 
