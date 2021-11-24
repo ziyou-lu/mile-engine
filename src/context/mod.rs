@@ -1,4 +1,4 @@
-use crate::InitConfig;
+use crate::{InitConfig, Mile};
 use rbatis::rbatis::Rbatis;
 use crate::common::log::Log;
 use grpc::rt::ServerServiceDefinition;
@@ -6,13 +6,14 @@ use crate::logic::logic_base::LogicBase;
 use std::sync::{Arc,Mutex};
 use std::ops::{Deref, DerefMut};
 use std::cell::RefCell;
+use std::iter::Map;
 
 pub struct Context {
     pub init_config: InitConfig,
     pub rbatis: Rbatis,
     pub log: Log,
 
-    pub(crate) logics: Arc<Mutex<Vec<Box<dyn LogicBase + Send>>>>
+    pub(crate) logics: Arc<Mutex<Vec<Box<dyn LogicBase + Send>>>>,
 }
 
 unsafe impl Sync for Context {
