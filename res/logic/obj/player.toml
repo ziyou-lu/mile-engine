@@ -1,0 +1,19 @@
+[data]
+props = [
+    {name = "id", type = "String", save = true, pub = true, priv = true},
+    {name = "name", type = "String", save = true, pub = true, priv = true},
+    {name = "x", type = "f32", save = true, pub = true, priv = true},
+    {name = "y", type = "f32", save = true, pub = true, priv = true},
+    {name = "z", type = "f32", save = true, pub = true, priv = true},
+]
+
+recs = [
+    {name = "skill_rec", save = true, pub = true, priv = false, schema = [
+        {name = "skill_id", type = "i32"},
+        {name = "skill_level", type = "i32"}
+    ]}
+
+]
+
+[box]
+

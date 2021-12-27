@@ -8,6 +8,7 @@ mod config;
 mod common;
 mod logic;
 mod obj;
+mod obj_mgr;
 
 use config::init_config::InitConfig;
 use crate::db::mapper::User;
@@ -16,7 +17,7 @@ use rbatis::crud::CRUD;
 use crate::common::error::Error;
 use crate::context::Context;
 use tokio::net::TcpListener;
-use obj::obj_type::ObjType;
+use obj::ObjType;
 pub struct Mile {
 	context: context::Context,
 

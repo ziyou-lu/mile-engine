@@ -1,5 +1,5 @@
 use std::{collections::HashMap};
-use crate::{MILE, obj::obj_type::ObjType};
+use crate::{MILE, obj::ObjType};
 
 use super::data_type::DataType;
 
