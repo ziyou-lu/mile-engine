@@ -23,7 +23,7 @@ impl Greeter for LoginGeeter {
 
         let reply = LoginResponse {
             success: true,
-            message: format!("Hello {}!", request.into_inner().user_name).into(), 
+            message: format!("Hello {}!", request.into_inner().user_name).into(),
             token: String::from("11111111111111111111111"),
         };
 
