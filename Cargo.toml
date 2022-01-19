@@ -3,13 +3,11 @@ name = "mile-engine"
 version = "0.1.0"
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 anyhow = "1.0.47"
 chrono = "0.4.19"
-grpc = "0.8.3"
 lazy_static = "1.4.0"
+prost = "0.9.0"
 protobuf = "2.25.1"
 rand = "0.8.4"
 rbatis = "2.0.24"
@@ -18,4 +16,8 @@ serde_derive = "1.0.129"
 serde_json = "1.0.66"
 tokio = { version ="1.10.0", features = ["full"] }
 toml = "0.5.8"
+tonic = "0.6.2"
 uuid = "0.8.2"
+
+[build-dependencies]
+tonic-build = "0.6.2"

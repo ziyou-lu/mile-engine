@@ -9,15 +9,15 @@ mod common;
 mod logic;
 mod obj;
 mod obj_mgr;
-
+mod geeter;
 use config::init_config::InitConfig;
-use crate::db::mapper::User;
+
 use std::ops::DerefMut;
-use rbatis::crud::CRUD;
+
 use crate::common::error::Error;
 use crate::context::Context;
 use tokio::net::TcpListener;
-use obj::ObjType;
+
 pub struct Mile {
 	context: context::Context,
 

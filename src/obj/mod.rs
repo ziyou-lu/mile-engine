@@ -11,8 +11,6 @@ pub enum ObjType {
     Scene(ObjData),
 }
 
-const
-
 impl Into<ObjData> for ObjType {
     
     fn into(self) -> ObjData {
@@ -31,7 +29,7 @@ pub struct Obj {
 }
 
 impl Obj {
-    pub fn save_data(&self) -> Result<()> {
+    /*pub fn save_data(&self) -> Result<()> {
         let obj_data: ObjData = self.obj_type.into();
-    }
+    }*/
 }

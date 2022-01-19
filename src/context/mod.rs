@@ -1,7 +1,6 @@
 use crate::{InitConfig, Mile};
 use rbatis::rbatis::Rbatis;
 use crate::common::log::Log;
-use grpc::rt::ServerServiceDefinition;
 use crate::logic::logic_base::LogicBase;
 use std::sync::{Arc,Mutex};
 use std::ops::{Deref, DerefMut};
