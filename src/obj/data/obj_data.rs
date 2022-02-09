@@ -2,21 +2,16 @@ use std::{collections::HashMap};
 use crate::{MILE, obj::ObjType};
 
 use super::data_type::DataType;
+use super::data_schema::*;
 
-pub struct ObjData {
+pub struct GameData {
     pub props: HashMap<String, DataType>,
     pub temps: HashMap<String, DataType>,
-    pub recs: HashMap<String, Rec>,
-    pub boxes: HashMap<String, Vec<ObjType>>,
-
+    pub recs: HashMap<String, Vec<Vec<DataType>>>,
+    pub items: HashMap<String, Vec<ObjType>>,
 }
 
-pub struct Rec {
-    pub schema: Vec<DataType>,
-    pub data: Vec<Vec<DataType>>,
-}
-
-impl ObjData {
+impl GameData {
     pub fn set_prop(&mut self, name: String, prop: DataType) {
         if self.props.contains_key(&name) {
             self.props.insert(name, prop);

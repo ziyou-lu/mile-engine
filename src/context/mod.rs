@@ -4,8 +4,6 @@ use crate::common::log::Log;
 use crate::logic::logic_base::LogicBase;
 use std::sync::{Arc,Mutex};
 use std::ops::{Deref, DerefMut};
-use std::cell::RefCell;
-use std::iter::Map;
 
 pub struct Context {
     pub init_config: InitConfig,

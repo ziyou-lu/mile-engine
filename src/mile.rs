@@ -33,23 +33,7 @@ impl Mile {
     pub fn get_context(&self) -> &Context {
         &self.context
     }
-
-    async fn init_tcp(&self) {
-        let listener = TcpListener::bind(self.context.init_config.global.host.clone()).await.unwrap();
-
-        loop{
-            let (mut socket,_) = listener.accept().await.unwrap();
-            tokio::spawn(async move {
-                let (mut reader, mut writer)=socket.split();
-                //let mut b1=Vec::new();
-                // reader.read(&mut b1).await;
-                // println!("接到客户端消息：{:?}",String::from_utf8_lossy(&b1));
-
-                // writer.write_all(format!("我接到了哦，别点了，你发送的信息为{:?}", String::from_utf8_lossy(&b1)).as_bytes()).await;
-            });
-        }
-    }
-
+    
     fn init_all_logics(&self) -> Result<(), Error>{
         for logic in MILE.get_context().logics.lock().unwrap().deref_mut() {
             if let Err(e) = logic.init() {

@@ -1,4 +1,12 @@
-[prop]
+[[prop]]
+name = "name"
+type = "string"
 
+[[prop]]
+name = "level"
+type = "i32"
 
-[rec]
+[[rec]]
+
+[[box]]
+

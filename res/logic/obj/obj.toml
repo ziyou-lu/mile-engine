@@ -1,0 +1,18 @@
+[[prop]]
+name = "id"
+data_type = "i32"
+save = true
+owner_visible = true
+other_visible = true
+[[prop]]
+name = "name"
+data_type = "string"
+save = true
+owner_visible = true
+other_visible = true
+[[prop]]
+name = "level"
+data_type = "i32"
+save = true
+owner_visible = true
+other_visible = true

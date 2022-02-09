@@ -1,24 +1,20 @@
 use anyhow::{Error, Result};
 
-use self::data::obj_data::ObjData;
+use self::data::obj_data::GameData;
 
 pub mod data;
 
 pub enum ObjType {
-    Npc(ObjData),
-    Player(ObjData),
-    Item(ObjData),
-    Scene(ObjData),
+    GameObj(GameData),
+    GameBox(GameData),
 }
 
-impl Into<ObjData> for ObjType {
+impl Into<GameData> for ObjType {
     
-    fn into(self) -> ObjData {
+    fn into(self) -> GameData {
         match self {
-            ObjType::Npc(o) => return o,
-            ObjType::Player(o) => return o,
-            ObjType::Item(o) => return o,
-            ObjType::Scene(o) => return o,
+            ObjType::GameObj(o) => return o,
+            ObjType::GameBox(o) => return o,
             _ => panic!("不可识别的对象类型"),
         }
     }

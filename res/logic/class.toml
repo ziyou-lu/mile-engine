@@ -1,8 +1,27 @@
-[obj]
-role = {tag = "role", design = "res/logic/design/obj/role.toml"}
-npc = {tag = "npc", design = "res/logic/design/obj/npc.toml"}
-item = {item = "item", design = "res/logic/design/obj/item.toml"}
+[[obj]]
+name = "obj"
+design = "res/logic/design/obj/obj.toml"
 
-[box]
-scene = {tag = "scene", design = "res/logic/design/box/scene.toml"}
-item_box = {tag = "item_box", design = "res/logic/design/box/item_box.toml"}
+[[obj]]
+name = "role"
+super = "obj"
+design = "res/logic/design/obj/role.toml"
+
+[[obj]]
+name = "npc" 
+super = "obj"
+design = "res/logic/design/obj/npc.toml"
+
+[[obj]]
+name = "item"
+super = "obj"
+design = "res/logic/design/obj/item.toml"
+
+
+[[box]]
+name = "scene"
+design = "res/logic/design/box/scene.toml"
+
+[[box]]
+name = "item_box"
+design = "res/logic/design/box/item_box.toml"
