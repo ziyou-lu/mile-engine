@@ -1,27 +1,32 @@
-[[obj]]
-name = "obj"
+[[objects]]
+name = "object"
 design = "res/logic/design/obj/obj.toml"
 
-[[obj]]
+[[objects]]
 name = "role"
-super = "obj"
+base = "object"
 design = "res/logic/design/obj/role.toml"
 
-[[obj]]
-name = "npc" 
-super = "obj"
+[[objects]]
+name = "npc"
+base = "object"
 design = "res/logic/design/obj/npc.toml"
 
-[[obj]]
+[[objects]]
 name = "item"
-super = "obj"
+base = "object"
 design = "res/logic/design/obj/item.toml"
 
+[[containers]]
+name = "container"
+design = "res/logic/design/box.toml"
 
-[[box]]
+[[containers]]
 name = "scene"
+base = "box"
 design = "res/logic/design/box/scene.toml"
 
-[[box]]
+[[containers]]
 name = "item_box"
+base = "box"
 design = "res/logic/design/box/item_box.toml"

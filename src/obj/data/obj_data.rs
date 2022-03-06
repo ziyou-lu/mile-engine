@@ -2,7 +2,7 @@ use std::{collections::HashMap};
 use crate::{MILE, obj::ObjType};
 
 use super::data_type::DataType;
-use super::data_schema::*;
+use super::super::schema::data_schema::*;
 
 pub struct GameData {
     pub props: HashMap<String, DataType>,

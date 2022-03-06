@@ -8,7 +8,6 @@ mod config;
 mod common;
 mod logic;
 mod obj;
-mod obj_mgr;
 pub mod mile;
 
 use config::init_config::InitConfig;

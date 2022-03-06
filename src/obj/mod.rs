@@ -3,6 +3,7 @@ use anyhow::{Error, Result};
 use self::data::obj_data::GameData;
 
 pub mod data;
+pub mod schema;
 
 pub enum ObjType {
     GameObj(GameData),

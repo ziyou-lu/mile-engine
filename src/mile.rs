@@ -1,17 +1,20 @@
 use std::net::TcpListener;
 use std::ops::DerefMut;
 use crate::common::error::Error;
-use crate::context;
+use crate::{config, context};
+use crate::config::logic_class_config::LogicClassConfig;
 use crate::context::Context;
 
 pub struct Mile {
     context: context::Context,
+    logic_class_config: LogicClassConfig,
 }
 
 impl Default for Mile {
     fn default() -> Self {
         Mile {
-            context: context::Context::default()
+            context: context::Context::default(),
+            logic_class_config: LogicClassConfig::default(),
         }
     }
 }
