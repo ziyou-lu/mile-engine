@@ -29,7 +29,7 @@ impl Mile {
         first_fn()
     }
 
-    pub fn start(&mut self) -> Result<(), Error> {
+    pub fn start(&self) -> Result<(), Error> {
         self.init_all_logics()
     }
 
